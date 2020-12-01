@@ -1,0 +1,31 @@
+﻿@model IEnumerable<ScienceAndCiaoWeb.Models.KitThumbnailViewModel>
+@* want to return an object of thumbnailview enumerable list, see the home controller *@
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@* push the search values using a get and not a post - this form searches all my thumbnail - by title becase that's what I put on my ThumbnailListItem *@
+@using (Html.BeginForm("Index", "Home", FormMethod.Get))
+{
+    <br />
+    <div class="row">
+        <div class="pull-right" style="padding-right:15px;">
+            <button type="submit" value="Search" class="btn btn-sm btn-primary">
+                <span class="glyphicon glyphicon-search"></span> &nbsp; Search
+            </button>
+        </div>
+        @*making form input buttom sm the same size as the above button*@
+        <div class="pull-right">
+            @Html.Editor("search", new { htmlAttributes = new { @class = "form-control input-sm" } })
+        </div>
+
+    </div>
+
+    <br />
+}
+<div class="row">
+    @foreach (var area in Model)
+    {
+        @Html.Partial("_ThumbnailAreaPartial", area);
+    }
+</div>

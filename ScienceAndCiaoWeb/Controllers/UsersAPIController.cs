@@ -1,0 +1,49 @@
+﻿using ScienceAndCiaoWeb.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+namespace ScienceAndCiaoWeb.Controllers
+{
+    public class UsersAPIController : ApiController
+    {
+        private ApplicationDbContext db;
+        public UsersAPIController()
+        {
+            db = ApplicationDbContext.Create();
+        }
+
+        //Get Email or (Name and birthdate) to autopopulate
+        public IHttpActionResult Get(string type, string query = null)
+        {
+            //get based on email match - see the javascript in the Create rental - whatever we put in the email box is passed to the API
+            //minlength in the UserController means typeahead kicks in after 3 characters
+            if (type.Equals("email") && query != null)
+            {
+                var formCustomerQuery = db.Users.Where(u => u.Email.ToLower().Contains(query.ToLower()));
+
+                return Ok(formCustomerQuery.ToList());
+            }
+            //get based on name match and return first name, last name and birthdate
+            if (type.Equals("name") && query != null)
+            {
+                var formCustomerQuery = from u in db.Users
+                                        where u.Email.Contains(query)
+                                        select new { u.FirstName, u.LastName, u.BirthDate };
+                return Ok(formCustomerQuery.ToList()[0].FirstName + " " + formCustomerQuery.ToList()[0].LastName + ";" + formCustomerQuery.ToList()[0].BirthDate);
+            }
+            return Ok();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+        }
+    }
+}

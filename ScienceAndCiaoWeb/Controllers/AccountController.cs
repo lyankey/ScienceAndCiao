@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using ScienceAndCiao.Models.User;
 using ScienceAndCiaoWeb.Data;
 using ScienceAndCiaoWeb.Models;
 
@@ -23,7 +25,7 @@ namespace ScienceAndCiaoWeb.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -35,9 +37,9 @@ namespace ScienceAndCiaoWeb.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -121,7 +123,7 @@ namespace ScienceAndCiaoWeb.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -137,13 +139,40 @@ namespace ScienceAndCiaoWeb.Controllers
 
         //
         // GET: /Account/Register
+        //change to pass in view model for a new user
+        //use the first one when first published so you can add some admins. Then use second. 
+        //change so customer can't sign up as admin - where clause
+        //[AllowAnonymous]
+        //public ActionResult Register()
+        //{
+        //    using (var db = ApplicationDbContext.Create())
+        //    {
+        //        RegisterViewModel newUser = new RegisterViewModel
+        //        {
+
+        //            MembershipTypes = db.MembershipTypes.ToList(),
+        //            BirthDate = DateTime.Now
+        //        };
+        //        return View(newUser);
+        //    }
+        //}
+        //This one is to disable registering as an admin, use this after making some admin users on the published site.
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            using (var db = ApplicationDbContext.Create())
+            {
+                RegisterViewModel newUser = new RegisterViewModel
+                {
+                    //get everything in db where name doesn't equal AdminUserRole
+                    MembershipTypes = db.MembershipTypes.Where(m => !m.Name.ToLower().Equals(StaticDetails.AdminUserRole.ToLower())).ToList(),
+                    BirthDate = DateTime.Now
+                };
+                return View(newUser);
+            }
         }
 
-        //
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -152,12 +181,46 @@ namespace ScienceAndCiaoWeb.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    BirthDate = model.BirthDate,
+                    LastName = model.LastName,
+                    FirstName = model.FirstName,
+                    MembershipTypeId = model.MembershipTypeId,
+                    Disable = false,
+
+                };
+
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    using (var db = ApplicationDbContext.Create())
+                    {
+                        //create roles and role manager
+                        model.MembershipTypes = db.MembershipTypes.ToList();
+                        var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                        var roleManager = new RoleManager<IdentityRole>(roleStore);
+                        var memebership = model.MembershipTypes.SingleOrDefault(m => m.Id == model.MembershipTypeId).Name.ToString();
+
+                        //admin will have admin text within
+                        if (memebership.ToLower().Contains("admin"))
+                        {
+                            //For  Admin assocates this user object to the admin role
+                            await roleManager.CreateAsync(new IdentityRole(StaticDetails.AdminUserRole));
+                            await UserManager.AddToRoleAsync(user.Id, StaticDetails.AdminUserRole);
+                        }
+                        else
+                        {
+                            //For Customer - if not an admin then associated to enduser role, then the sign in manager kicks in below
+                            await roleManager.CreateAsync(new IdentityRole(StaticDetails.EndUserRole));
+                            await UserManager.AddToRoleAsync(user.Id, StaticDetails.EndUserRole);
+                        }
+                    }
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -167,6 +230,10 @@ namespace ScienceAndCiaoWeb.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
+            }
+            using (var db = ApplicationDbContext.Create())
+            {
+                model.MembershipTypes = db.MembershipTypes.ToList();
             }
 
             // If we got this far, something failed, redisplay form
@@ -320,6 +387,7 @@ namespace ScienceAndCiaoWeb.Controllers
 
         //
         // GET: /Account/ExternalLoginCallback
+        //for this to work, must add application db context and then the info we need to pass in for registration
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
@@ -329,7 +397,7 @@ namespace ScienceAndCiaoWeb.Controllers
                 return RedirectToAction("Login");
             }
 
-            // Sign in the user with this external login provider if the user already has a login
+            // Sign in the user with this external login provider if the user already has a login - put dbcontext in using statement to dispose
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
@@ -344,7 +412,17 @@ namespace ScienceAndCiaoWeb.Controllers
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+
+                    using (var db = ApplicationDbContext.Create())
+
+                        return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
+                        {
+
+                            Email = loginInfo.Email,
+                            BirthDate = DateTime.Now,
+                            MembershipTypes = db.MembershipTypes.Where(m => !m.Name.ToLower().Equals(StaticDetails.AdminUserRole.ToLower())).ToList()
+
+                        });
             }
         }
 
@@ -353,6 +431,7 @@ namespace ScienceAndCiaoWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
+        //must add first name and last name, //get the name and split it
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
@@ -368,7 +447,10 @@ namespace ScienceAndCiaoWeb.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var name = info.ExternalIdentity.Name.Split(' ');
+                var firstName = name[0].ToString();
+                var lastName = name[1].ToString();
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = firstName, LastName = lastName, BirthDate = model.BirthDate, MembershipTypeId = model.MembershipTypeId, Disable = false };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

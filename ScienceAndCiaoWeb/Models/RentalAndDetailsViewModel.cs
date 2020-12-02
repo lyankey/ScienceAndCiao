@@ -86,12 +86,12 @@ namespace ScienceAndCiaoWeb.Models
                 {
                     return "Return";
                 }
-                //if (Status.ToLower().Contains(StaticDetails.ClosedLower))
-                //{
-                //    return "Closed";
-                //}
+                if (Status.ToLower().Contains(StaticDetails.Closed))
+                {
+                    return "Closed";
+                }
 
-                return "Return";
+                return null;
             }
 
         }

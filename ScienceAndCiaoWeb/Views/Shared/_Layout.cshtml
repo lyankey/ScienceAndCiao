@@ -25,9 +25,10 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Rental Status", "Index", "Rent")</li>
-                    @if (User.IsInRole(StaticDetails.AdminUserRole))
-                    {
-                        @Html.Partial("_AdminMenuPartial")}
+                    @*@if (User.IsInRole(StaticDetails.AdminUserRole))
+                        {*@
+                    @Html.Partial("_AdminMenuPartial")
+                    @*}*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -42,6 +43,7 @@
             <p class="text-muted">Science And Ciao</p>
         </div>
     </footer>
+    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/kitRentalJs")
     @RenderSection("scripts", required: false)
 </body>

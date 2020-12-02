@@ -19,7 +19,7 @@ namespace ScienceAndCiaoWeb
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+            bundles.Add(new ScriptBundle("~/bundles/kitRentalJs").Include(
                        "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js",
                        "~/Scripts/typeahead.bundle.min",
@@ -32,6 +32,8 @@ namespace ScienceAndCiaoWeb
                       "~/Content/thumbnail.css",
                         "~/Content/typeahead.css",
                       "~/Content/site.css"));
+
+            BundleTable.EnableOptimizations = false;
         }
     }
 }

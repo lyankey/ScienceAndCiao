@@ -115,6 +115,15 @@
     <Compile Include="IdentityModels.cs" />
     <Compile Include="Kit.cs" />
     <Compile Include="MembershipType.cs" />
+    <Compile Include="Migrations\202012012150585_InitialCreate.cs" />
+    <Compile Include="Migrations\202012012150585_InitialCreate.designer.cs">
+      <DependentUpon>202012012150585_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012012332234_SeedMembershipTypeDatabase.cs" />
+    <Compile Include="Migrations\202012012332234_SeedMembershipTypeDatabase.designer.cs">
+      <DependentUpon>202012012332234_SeedMembershipTypeDatabase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rental.cs" />
   </ItemGroup>
@@ -158,6 +167,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\typeahead.css" />
+    <Content Include="Scripts\AdminMenu.js" />
     <Content Include="Scripts\bloodhound.js" />
     <Content Include="Scripts\bloodhound.min.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -251,6 +261,14 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202012012150585_InitialCreate.resx">
+      <DependentUpon>202012012150585_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012012332234_SeedMembershipTypeDatabase.resx">
+      <DependentUpon>202012012332234_SeedMembershipTypeDatabase.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

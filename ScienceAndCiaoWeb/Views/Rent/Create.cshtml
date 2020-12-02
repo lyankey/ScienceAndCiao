@@ -8,79 +8,84 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h3>Enter Your Email Address to Confirm Rental</h3>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Email, new { id = "email", @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
+<div class="form-horizontal">
+    <h3>Enter Your Email Address to Get the Details of this Rental</h3>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(model => model.Email, new { id = "email", @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
         </div>
+    </div>
+    <fieldset disabled>
         <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Title, new { id = "bookTitle", @class = "form-control" })
+                @Html.TextBoxFor(model => model.Title, new { id = "kitTitle", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
+
         </div>
+    </fieldset>
+
+    @*This is would allow for different options, like to purchase a kit or to rent for a longer period of time - depends*@
+    @*@{ List<SelectListItem> listItem = new List<SelectListItem>();
+        listItem.Add(new SelectListItem
+        {
+            Text = StaticDetails.OneMonth,
+            Value = StaticDetails.OneMonthMembership
+        });
+        listItem.Add(new SelectListItem
+        {
+            Text = StaticDetails.SixMonth,
+            Value = StaticDetails.SixMonthMembership
+        }); }*@
 
 
-        @{ List<SelectListItem> listItem = new List<SelectListItem>();
-            listItem.Add(new SelectListItem
-            {
-                Text = StaticDetails.OneMonth,
-                Value = StaticDetails.OneMonthMembership
-            });
-            listItem.Add(new SelectListItem
-            {
-                Text = StaticDetails.SixMonth,
-                Value = StaticDetails.SixMonthMembership
-            }); }
-
-
-        <div class="form-group">
+    @*<div class="form-group">
             @Html.LabelFor(model => model.Duration, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownListFor(model => model.Duration, listItem, new { id = "ddlRentalDuration", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Duration, "", new { @class = "text-danger" })
             </div>
+        </div>*@
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" value="Confirm Information" id="btnAvailibility" class="btn btn-sm btn-success" />
+            <input type="submit" value="Rent" id="btnSubmit" style="display:none;" class="btn btn-sm btn-success" />
         </div>
+    </div>
 
-        <div id="nameAndDob" style="display:none">
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.Label(" ", new { id = "firstName", style = "width:350px;", @class = "form-control" })
-                </div>
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.BirthDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.Label(" ", new { id = "birthDate", style = "width:350px;", @class = "form-control" })
-                </div>
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.RentalPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.Label(" ", new { id = "lblRentalPrice", style = "width:350px;", @class = "form-control" })
-
-                    @Html.Label("Discounted Rate", new { id = "lblDiscountDisplay", style = "width:350px;color:green;display:none;" })
-                </div>
-            </div>
-        </div>
+    <div id="nameAndDob" style="display:none">
 
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="button" value="Check Avaibility" id="btnAvailibility" class="btn btn-sm btn-success" />
-                <input type="submit" value="Reserve" id="btnSubmit" style="display:none;" class="btn btn-sm btn-success" />
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(" ", new { id = "firstName", style = "width:350px;", @class = "form-control" })
             </div>
         </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BirthDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(" ", new { id = "birthDate", style = "width:350px;", @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.RentalPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.Label(" ", new { id = "lblRentalPrice", style = "width:350px;", @class = "form-control" })
 
-    </div>  }
+                @Html.Label("Discounted Rate", new { id = "lblDiscountDisplay", style = "width:350px;color:green;display:none;" })
+            </div>
+        </div>
+    </div>
+
+
+
+</div>  }
 
 @* See the UserAPIController *@
 @section scripts{

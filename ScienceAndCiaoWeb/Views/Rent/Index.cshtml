@@ -123,7 +123,7 @@
                 </td>
                 @* Action buttons *@
                 <td>
-                    @if (item.Status.ToString().ToLower().Equals(StaticDetails.Closed) && User.IsInRole(StaticDetails.AdminUserRole))
+                    @*@if (item.Status.ToString().ToLower().Equals(StaticDetails.Closed) && User.IsInRole(StaticDetails.AdminUserRole) | User.IsInRole(StaticDetails.EndUserRole))
                     {
                         //Show Delete Button
                         //If User is admin and status is  closed then show admin delete button
@@ -139,14 +139,14 @@
                            MembershipTypeId = null,
                            UserId = null,
                            RentalId = item.RentalId
-                        }) }
+                        }) }*@
 
 
-                    else
-                    {
-                        if (item.Status.ToString().ToLower().Equals(StaticDetails.Rented))
+                   
+                    
+                        @*if (item.Status.ToString().ToLower().Equals(StaticDetails.Rented))
                         {
-                            //Display Return Button if the item is in Rented status
+                            //Display Return Button if the item is in Rented status*@
                             @Html.Partial("_IndivButtonPartial", new IndivButtonPartial
                             {
                                Action = "Return",
@@ -159,9 +159,8 @@
                                MembershipTypeId = null,
                                UserId = null,
                                RentalId = item.RentalId
-                            })}
-                    }
-                    }
+                            })
+                    
 
 
 

@@ -21,15 +21,15 @@ namespace ScienceAndCiao.Data
         public string UserId { get; set; }
 
 
-        [Required]
+     
         public double RentalPrice { get; set; }
 
-        [Required]
+      
         public DateTime? StartDate { get; set; }
-        [Required]
+      
         public DateTime? Duration { get; set; }
 
-        [Required]
+     
         public DateTime? EndDate { get; set; }
         public StatusEnum Status { get; set; }
         public enum StatusEnum

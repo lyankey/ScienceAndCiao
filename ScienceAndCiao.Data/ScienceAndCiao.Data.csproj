@@ -139,6 +139,10 @@
     <Compile Include="Migrations\202012030002319_AddedRangeToStock.designer.cs">
       <DependentUpon>202012030002319_AddedRangeToStock.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012031427022_AlteredRequirementsRent.cs" />
+    <Compile Include="Migrations\202012031427022_AlteredRequirementsRent.designer.cs">
+      <DependentUpon>202012031427022_AlteredRequirementsRent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rental.cs" />
@@ -296,6 +300,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012030002319_AddedRangeToStock.resx">
       <DependentUpon>202012030002319_AddedRangeToStock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012031427022_AlteredRequirementsRent.resx">
+      <DependentUpon>202012031427022_AlteredRequirementsRent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

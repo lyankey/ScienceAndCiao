@@ -40,7 +40,7 @@ namespace ScienceAndCiaoWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Create(RentalAndDetailsViewModel rental)
         {
             Console.WriteLine(rental);
@@ -56,7 +56,7 @@ namespace ScienceAndCiaoWeb.Controllers
 
                 Kit kitSelected = db.Kits.Where(b => b.Title == title).FirstOrDefault();
 
-                var rentalDuration = rental.Duration;
+                var Duration = rental.Duration;
 
                 var chargeRate = from u in db.Users
                                  join m in db.MembershipTypes
@@ -245,7 +245,7 @@ namespace ScienceAndCiaoWeb.Controllers
 
         //after it is returned I want to save it as closed in the list of rentals. I don't have a view for this. Not sure if I need one. 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public ActionResult Closed(RentalAndDetailsViewModel model)
         {
             if (model.RentalId == 0)
@@ -263,7 +263,7 @@ namespace ScienceAndCiaoWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public ActionResult Return(RentalAndDetailsViewModel model)
         {
             if (model.KitId == 0)
@@ -302,7 +302,7 @@ namespace ScienceAndCiaoWeb.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int Id)
         {
             if (Id == 0)
@@ -386,7 +386,7 @@ namespace ScienceAndCiaoWeb.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public ActionResult Approve(RentalAndDetailsViewModel model)
         {
             if (model.RentalId == 0)

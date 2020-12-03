@@ -44,5 +44,8 @@ namespace ScienceAndCiao.Data
         public DateTime PublicationDate { get; set; }
         [Required]
         public int LengthInMinutes { get; set; }
+        [Required]
+        [Range(0, 1000)]
+        public int Stock { get; set; }
     }
 }

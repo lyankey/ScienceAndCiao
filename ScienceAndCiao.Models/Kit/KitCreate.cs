@@ -44,5 +44,7 @@ namespace ScienceAndCiao.Models.Kit
         public DateTime PublicationDate { get; set; }
         [Required]
         public int LengthInMinutes { get; set; }
+
+        public bool UserHasBaseKit { get; set; }
     }
 }

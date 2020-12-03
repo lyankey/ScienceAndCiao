@@ -14,8 +14,8 @@ namespace ScienceAndCiao.Models.User
         public const string OneMonth = "Free Membership Price";
         public const string SixMonth = "Paid Membership Price";
 
-        public const string OneMonthMembership = "1";
-        public const string SixMonthMembership = "6";
+        public const string MonthlyMembershipFee = "1";
+        public const string SixMonthmemberShipFee = "6";
 
         public const string Rented = "rented";
 

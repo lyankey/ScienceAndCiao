@@ -35,14 +35,14 @@ namespace ScienceAndCiaoWeb.Controllers
             //get user details and then calculate the rental price   and also not an admin  -- if they are not an admin and have logged in, they will see....
             if (userid != null && !User.IsInRole(StaticDetails.AdminUserRole))
             {
-                var rate = from u in db.Users
+                var chargeRate = from u in db.Users
                                  join m in db.MembershipTypes on u.MembershipTypeId equals m.Id
                                  where u.Id.Equals(userid)
                                  select new { m.MonthlyMembershipFee, m.SixMonthMemberShipFee };
                 //get price of kit, multiply by discount percentage, 0 record is for one month (first entry), 1 record is for 6 month
 
-                oneMonthRental = Convert.ToDouble(kitModel.Price) * Convert.ToDouble(rate.ToList()[0].MonthlyMembershipFee) / 100;
-                sixMonthRental = Convert.ToDouble(kitModel.Price) * Convert.ToDouble(rate.ToList()[0].SixMonthMemberShipFee) / 100;
+                oneMonthRental = Convert.ToDouble(kitModel.Price) * Convert.ToDouble(chargeRate.ToList()[0].MonthlyMembershipFee) / 100;
+                sixMonthRental = Convert.ToDouble(kitModel.Price) * Convert.ToDouble(chargeRate.ToList()[0].SixMonthMemberShipFee) / 100;
                 //rentalCount = Convert.ToInt32(rate.ToList()[0].RentalCount);
             }
 
@@ -60,8 +60,9 @@ namespace ScienceAndCiaoWeb.Controllers
                 LengthInMinutes = kitModel.LengthInMinutes,
                 UserId = userid,
                 RentalPrice = rentalPrice,
-                RentalPriceOneMonth = oneMonthRental,
-                RentalPriceSixMonth = sixMonthRental,
+                MonthlyMembershipFee = oneMonthRental,
+                Stock = kitModel.Stock,
+                SixMonthMemberShipFee = sixMonthRental,
                 //RentalCount = rentalCount
 
             };

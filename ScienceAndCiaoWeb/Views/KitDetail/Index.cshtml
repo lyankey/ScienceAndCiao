@@ -1,264 +1,153 @@
 ﻿@model ScienceAndCiaoWeb.Models.RentalAndDetailsViewModel
 @using ScienceAndCiao.Models.User
 @using ScienceAndCiao.Services
+
 @{
     ViewBag.Title = "Index";
 }
+
 @* making three columns, one for pic, one for description and title, and one for rental details *@
 
-
-@using (Html.BeginForm("Rent", "Create"))
+@using (Html.BeginForm("Reserve", "Rent"))
 {
-    @Html.AntiForgeryToken();
+@Html.AntiForgeryToken();
 
-    <div class="row">
-        @* Kit Image *@
-        <div class="col-sm-3 col-xs-4 image-kit">
-            <img class="thumbnail-img" src="@Model.ImageUrl" alt="" style="width:100%;height:auto;padding:10px;" />
+<div class="row">
+    @* Product Image *@
+    <div class="col-sm-3 col-xs-4 image-kit">
+        <img class="thumbnail-img" src="@Model.ImageUrl" alt="" style="width:100%;height:auto;padding:10px;" />
+    </div>
+
+
+    @* Kit Details(Title/Description) *@
+    <div class="col-sm-6 col-xs-8 content-kit-main">
+        <div class="content-kit-title-author">
+            <h2><b>@Model.Title</b></h2> 
         </div>
+        <div>
+            <br />
+            <span>@Html.Raw(Model.Description)</span>
+        </div><br />
+    </div>
 
 
-        @* Kit Details(Title/Grade/Description) *@
-        <div class="col-sm-6 col-xs-8 content-kit-main">
-            @* this allows the other two to take precedence if the space is small. html.raw is so stuff like br stays hidden *@
-            @* See the kitdetail style sheet for the styles for this *@
-            <div class="content-kit-title-grade">
-                <h2><b>@Model.Title</b></h2>
-                <h5>@Model.Grade</h5>
-            </div>
-            <div>
+    @* Rental Price and other product details *@
+<div class="col-sm-3 col-xs-12 content-kit-product-details">
+    <div>
+        @{ List<SelectListItem> listItem = new List<SelectListItem>();
+            listItem.Add(new SelectListItem
+            {
+                Text = StaticDetails.OneMonth,
+                Value = StaticDetails.MonthlyMembershipFee
+            });
+            listItem.Add(new SelectListItem
+            {
+                Text = StaticDetails.SixMonth,
+                Value = StaticDetails.SixMonthmemberShipFee
+            }); }
 
-                <br />
-                <span>@Html.Raw(Model.Description)</span>
-            </div><br />
-        </div>
+        @if (Model.MonthlyMembershipFee != 1 && Model.SixMonthMemberShipFee != 1)
+        {
+            //User has logged in and they are not admin
 
+            <div class="form-control" style="height:350px;">
+                <div class="input-group" style="height:30px">
+                    <label>MSRP:</label>
+                    <label id="lblMSRP" style="font-weight:normal;">$@(Model.Price)</label><br />
+                </div>
+                <hr />
 
-        @* Rental Price and other kit details *@
-        <div class="col-sm-3 col-xs-12 content-book-product-details">
-            <div>
-                @{ List<SelectListItem> listItem = new List<SelectListItem>();
-                    listItem.Add(new SelectListItem
-                    //calling static details avoids magic strings -- with these, the price shown matches the calucation in kitdetailcontroller
-                    {
-                        Text = StaticDetails.OneMonth,
-                        Value = StaticDetails.OneMonthMembership
-                    });
-                    listItem.Add(new SelectListItem
-                    {
-                        Text = StaticDetails.SixMonth,
-                        Value = StaticDetails.SixMonthMembership
-                    });
-                }
-
-                @if (Model.RentalPriceOneMonth != 0 && Model.RentalPriceSixMonth != 0)
-                {
-                    //User logged in and they are not admin
-
-                    <div class="form-control" style="height:350px;">
-                        <div class="input-group" style="height:30px">
-                            <label>Rental Without Membership</label>
-                            <label id="lblPublicPrice" style="font-weight:normal;">$@(Model.Price)</label><br />
-                        </div>
-                        @* horizontal line break after this section to separate *@
-                        <hr />
-
-                        <div id="divRegularPrice" class="input-group" style="height:90px;">
-                            <label>Rental With Membership</label><br />
-
-                            <label id="lblOneMonth" style="font-weight:normal;">Free Membership Price : $@(Model.RentalPriceOneMonth)</label>
-                            <br />
-                            <label id="lblOneMonth" style="font-weight:normal;">Six Month Member Price : $@(Model.RentalPriceSixMonth)</label>
-                        </div>
-                        @Html.ActionLink("Rent This Kit", "Create", "Rent",
-                                         new { title = Model.Title }, new { @class = "btn btn-primary" })
-
+                    <div id="divRegularPrice" class="input-group" style="height:90px;">
+                        <label>Rental Price : </label><br />
+                        <label id="lblOneMonth" style="font-weight:normal;">One Month : $@(Model.MonthlyMembershipFee)</label>
                         <br />
+                        @*<label id="lblOneMonth" style="font-weight:normal;">Six Months : $@(Model.SixMonthMemberShipFee)</label>*@
                     </div>
-                }
+                <br />
+                <label>Select your membership </label><br />
+                @Html.DropDownListFor(m => m.Duration, listItem, new { @class = "form-control" })
+                <span style="font-size:12px;"><br /><br /></span>
+
+                @if (Model.Stock > 0)
+                {
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-thumbs-up"></span>&nbsp;Rent This Kit
+                    </button> }
                 else
                 {
+                    <button type="submit" class="btn btn-danger" disabled="disabled">
+                        <span class="glyphicon glyphicon-thumbs-down"></span>&nbsp;Unavailable
+                    </button>}
+            </div> }
+        else
+        {
+            <div class="form-control" style="height:150px;">
+                <div class="input-group" style="height:30px;">
+                    <label>MSRP:</label>
+                    <label id="lblMSRP" style="font-weight:normal;">$@(Model.Price)</label><br />
+                </div>
+                <hr />
 
-                    <div class="form-control" style="height:150px;">
-                        <div class="input-group" style="height:30px;">
-                            <label>MSRP:</label>
-                            <label id="lblMSRP" style="font-weight:normal;">$@(Model.Price)</label><br />
-                        </div>
-                        <hr />
-
-                        @if (User.IsInRole(StaticDetails.AdminUserRole))
-                        {
-                            //Admin user with Create button
-                            @Html.ActionLink("Rent This Kit", "Create", "Rent",
-                                                    new { title = Model.Title }, new { @class = "btn btn-primary" })
-                        }
-                        else
-                        {
-                            if (User.IsInRole(StaticDetails.EndUserRole))
-                            {
-                                @Html.ActionLink("Rent this Kit", "Create", "Rent",
-                                                                   new { title = Model.Title }, new { @class = "btn btn-primary" })
-                            }
-                            else
-                            {
-                                //User not logged in
-                                < span > Login to unlock the discounted member price </ span >
-                            }
-                        }
-
-                    </div>
-                }
-            </div>
-
-            <h4 class="kit-details-heading">Kit Details</h4>
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(m => m.LengthInMinutes)
-                </dt>
-                <dd>
-                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.LengthInMinutes)
-                </dd>
-            </dl>
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(m => m.PublicationDate)
-                </dt>
-                <dd>
-                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.PublicationDate)
-                </dd>
-            </dl>
-
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(m => m.Grade)
-                </dt>
-                <dd>
-                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Grade)
-                </dd>
-            </dl>
-            <dl>
-                <dt>
-                    @Html.DisplayNameFor(m => m.Price)
-                </dt>
-                <dd>
-                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Price)
-                </dd>
-            </dl>
-
-            @Html.HiddenFor(m => m.KitId)
-        </div>
-    </div>
-}
-
-@* See the UserAPIController *@
-@section scripts{
-
-    <script>
-    $(document).ready(function () {
-            var customers = new Bloodhound({
-
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('email'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                // `states` is an array of state names defined in "The Basics"
-                remote: {
-                    url: '/API/UsersAPI?type=email&query=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-
-            $('#email').typeahead({ highlight: true, minLength: 3 },
+                @if (User.IsInRole(StaticDetails.AdminUserRole) && Model.Stock > 0)
                 {
-                    name: 'customers',
-                    display: 'Email',
-                    source: customers
-                });
-
-
-            var kitTitle = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('Title'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                // `states` is an array of state names defined in "The Basics"
-                remote: {
-                    url: '/API/KitAPI?query=%QUERY',
-                    wildcard: '%QUERY'
-                }
-            });
-
-            $('#kitTitle').typeahead({ highlight: true, minLength: 3 },
+                    //Admin user has Create button
+                    @Html.ActionLink("Create Rental", "Create", "Rent",
+                        new { title = Model.Title }, new { @class = "btn btn-primary" }) }
+                else
                 {
-                    name: 'kitTitle',
-                    display: 'Title',
-                    source: kitTitle
-                });
-        });
-
-        //Making Changes to Scripts
-        $('#btnAvailibility').click(function () {
-            var Duration = document.getElementById("ddlDuration").value;
-            var rentalPrice = 0.0;
-            $.ajax({
-                url: '/api/KitAPI?type=avail&isbn=' + isbn,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data, textStatus, xhr) {
-                    $('#lblAvaibility').text(data + ' available')
-                    if (data > 0)
+                    if (User.IsInRole(StaticDetails.AdminUserRole) && Model.Stock == 0)
                     {
-                        document.getElementById('btnSubmit').style.display = '';
-                    }
+                        //Admin user stock not available
+                        <button type="submit" class="btn btn-danger" disabled>
+                            <span class="glyphicon glyphicon-thumbs-down"></span>Unavailable
+                        </button> }
                     else
                     {
-                        document.getElementById('btnSubmit').value = "Not Available";
-                        document.getElementById('btnSubmit').style.display = '';
-                        document.getElementById('btnSubmit').disabled = true;
-                        document.getElementById('btnSubmit').classList.remove('btn-success');
-                        document.getElementById('btnSubmit').classList.add('btn-danger');
-                    }
-                },
-                error: function (xhr, textStatus, errorThrown)
-                {
-
+                        //not logged in
+                        <span>Sign up as a member to see prices. Free memberships available.</span>}
                 }
-            });
-
-        $.ajax({
-            url: '/api/KitAPI?type=price&isbn=' + + '&Duration=' + Duration + '&email=' + email,
-            type: 'GET',
-            dataType: 'json',
-            success: function (data, textStatus, xhr) {
-                rentalPrice = data;
-                $('#lblRentalPrice').text(data)
-            },
-            error: function (xhr, textStatus, errorThrown) {
-
-            }
-        });
-
-        $.ajax({
-            url: '/api/UsersAPI?type=name&query=' + email,
-            type: 'GET',
-            dataType: 'json',
-            success: function (data, textStatus, xhr) {
-                var fields = data.split(';')
-
-                $('#firstName').text(fields[0]);
-
-                var birthDate = fields[1].split(' ');
-                $('#birthDate').text(birthDate[0])
-                document.getElementById("nameAndDob").style.display = '';
-                var rentalCount = fields[2];
-                if (rentalCount == 10) {
-                    $('#lblRentalPrice').text(rentalPrice - (rentalPrice * 20 / 100));
-                    document.getElementById("lblDiscountDisplay").style.display = '';
-                }
-
-            },
-            error: function (xhr, textStatus, errorThrown) {
-
-            }
-
-            });
-    </script>
+            </div>          }
+    </div>
 
 
-}
+    <h4 class="product-details-heading">Science Kit Details</h4>
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(m => m.Grade)
+        </dt>
+        <dd>
+            &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Grade)
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(m => m.PublicationDate)
+        </dt>
+        <dd>
+            &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.PublicationDate)
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(m => m.LengthInMinutes)
+        </dt>
+        <dd>
+            &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.LengthInMinutes)
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            @Html.DisplayNameFor(m => m.Price)
+        </dt>
+        <dd>
+            &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Price)
+        </dd>
+    </dl>
+
+    @Html.HiddenFor(m => m.KitId)
+    @Html.HiddenFor(m => m.PublicationDate)
+    @Html.HiddenFor(m => m.SixMonthMemberShipFee)
+
+
+</div>
+</div>}

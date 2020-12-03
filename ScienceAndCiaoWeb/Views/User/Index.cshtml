@@ -6,7 +6,7 @@
 
 <h2>Manage Users</h2>
 
-@Html.Partial("_CreateButtonPartial")
+@*@Html.Partial("_CreateButtonPartial")*@
 <br />
 <br />
 <table class="table table-condensed table-hover">
@@ -24,7 +24,7 @@
             @Html.DisplayNameFor(m => m.BirthDate)
         </th>
         <th>
-            @Html.DisplayNameFor(m => m.Disabled)
+            @*@Html.DisplayNameFor(m => m.Disabled)*@
         </th>
         <th></th>
         <th>
@@ -48,7 +48,7 @@
                 @Html.DisplayFor(m => item.BirthDate)
             </td>
             <td>
-                @Html.CheckBoxFor(m => item.Disabled, new { @disabled = "disabled" })
+                @*@Html.CheckBoxFor(m => item.Disabled, new { @disabled = "disabled" })*@
             </td>
             <td>
                 @Html.Partial("_TableButtonPartial", new IndivButtonPartial { UserId = item.Id })

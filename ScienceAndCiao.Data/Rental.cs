@@ -20,6 +20,7 @@ namespace ScienceAndCiao.Data
 
         public string UserId { get; set; }
 
+
         [Required]
         public double RentalPrice { get; set; }
 

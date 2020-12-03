@@ -83,7 +83,8 @@ namespace ScienceAndCiaoWeb.Controllers
                 Branch = kvmodel.Kit.Branch,
                 BranchId = kvmodel.Kit.BranchId,
                 PublicationDate = kvmodel.Kit.PublicationDate,
-                LengthInMinutes = kvmodel.Kit.LengthInMinutes
+                LengthInMinutes = kvmodel.Kit.LengthInMinutes,
+                Stock = kvmodel.Kit.Stock
 
             };
             if (ModelState.IsValid)
@@ -147,7 +148,8 @@ namespace ScienceAndCiaoWeb.Controllers
                 Branch = kvmodel.Kit.Branch,
                 BranchId = kvmodel.Kit.BranchId,
                 PublicationDate = kvmodel.Kit.PublicationDate,
-                LengthInMinutes = kvmodel.Kit.LengthInMinutes
+                LengthInMinutes = kvmodel.Kit.LengthInMinutes,
+                Stock = kvmodel.Kit.Stock
 
             };
             if (ModelState.IsValid)

@@ -24,6 +24,7 @@ namespace ScienceAndCiaoWeb.Controllers
         }
 
         //Get Method
+        //create post action, get rental view model object, convert to rental, then add to database
         public ActionResult Create(string title = null)
         {
             if (title != null)
@@ -63,18 +64,18 @@ namespace ScienceAndCiaoWeb.Controllers
                                  where u.Email.Equals(email)
                                  select new { m.MonthlyMembershipFee, m.SixMonthMemberShipFee };
 
-                var monthlyMembershipFee = Convert.ToDouble(kitSelected.Price) * Convert.ToDouble(chargeRate.ToList()[0].MonthlyMembershipFee) / 100;
-                var sixMonthMemberShipFee = Convert.ToDouble(kitSelected.Price) * Convert.ToDouble(chargeRate.ToList()[0].SixMonthMemberShipFee) / 100;
+                var monthlyMemberPrice = Convert.ToDouble(kitSelected.Price) * Convert.ToDouble(chargeRate.ToList()[0].MonthlyMembershipFee) / 100;
+                var sixMonthMemberPrice = Convert.ToDouble(kitSelected.Price) * Convert.ToDouble(chargeRate.ToList()[0].SixMonthMemberShipFee) / 100;
 
                 double rentalPrice = 0;
 
-                if (rental.Duration == StaticDetails.SixMonthMembership)
+                if (rental.Duration == StaticDetails.SixMonth)
                 {
-                    rentalPrice = sixMonthMemberShipFee;
+                    rentalPrice = sixMonthMemberPrice;
                 }
                 else
                 {
-                    rentalPrice = monthlyMembershipFee;
+                    rentalPrice = monthlyMemberPrice;
                 }
                 var registeredUser = db.Users.SingleOrDefault(u => u.Email == email);
                 Rental modelToAddToDb = new Rental
@@ -128,7 +129,8 @@ namespace ScienceAndCiaoWeb.Controllers
                             ImageUrl = k.ImageUrl,
                             PublicationDate = k.PublicationDate,
                             Title = k.Title,
-                            UserId = u.Id
+                            UserId = u.Id,
+                            Stock = k.Stock
 
                         };
 
@@ -141,22 +143,22 @@ namespace ScienceAndCiaoWeb.Controllers
             {
                 model = model.Where(u => u.FirstName.Contains(search) || u.LastName.Contains(search));
             }
-            //if (!User.IsInRole(StaticDetails.AdminUserRole))
-            //{
-            //    model = model.Where(u => u.UserId.Equals(userid));
-            //}
+            if (option == "status" && search.Length > 0)
+            {
+                model = model.Where(u => u.Status.Contains(search));
+            }
+            if (!User.IsInRole(StaticDetails.AdminUserRole))
+            {
+                model = model.Where(u => u.UserId.Equals(userid));
+            }
             //means for each 1 page, display 5 rows
             return View(model.ToList().ToPagedList(pageNumber ?? 1, 5));
         }
 
 
 
-
-
-
-
         [HttpPost]
-        public ActionResult Rent(RentalAndDetailsViewModel kit)
+        public ActionResult Reserve(RentalAndDetailsViewModel kit)
         {
             var userid = User.Identity.GetUserId();
             Kit kitToRent = db.Kits.Find(kit.KitId);
@@ -169,7 +171,7 @@ namespace ScienceAndCiaoWeb.Controllers
                                  on u.MembershipTypeId equals m.Id
                                  where u.Id.Equals(userid)
                                  select new { m.MonthlyMembershipFee, m.SixMonthMemberShipFee };
-                if (kit.Duration == StaticDetails.SixMonthMembership)
+                if (kit.Duration == StaticDetails.SixMonthmemberShipFee)
                 {
                     rentalPrice = Convert.ToDouble(kitToRent.Price) * Convert.ToDouble(chargeRate.ToList()[0].SixMonthMemberShipFee) / 100;
                 }
@@ -237,7 +239,7 @@ namespace ScienceAndCiaoWeb.Controllers
                 return HttpNotFound();
             }
 
-            return View("Return", model);
+            return View("Approve", model);
         }
 
 
@@ -271,9 +273,7 @@ namespace ScienceAndCiaoWeb.Controllers
             if (ModelState.IsValid)
             {
                 Rental rental = db.Rentals.Find(model.RentalId);
-                Kit kitInDb = db.Kits.Find(rental.KitId);
-
-                var registeredUser = db.Users.Single(u => u.Id == rental.UserId);
+                rental.Status = Rental.StatusEnum.Closed;
 
                 db.SaveChanges();
             }
@@ -321,6 +321,8 @@ namespace ScienceAndCiaoWeb.Controllers
             return RedirectToAction("Index");
         }
 
+
+
         //get one record from the db based on Id. Then join user ingo to the rental info. Select new details I want from user model.
         //any details where I need to retrieve from db needs to have db.modelname.FirstOrDefault(lambda stuff)\
         //this converts a rental object into a rentalviewmodel object - go to details action method to consume that
@@ -354,12 +356,52 @@ namespace ScienceAndCiaoWeb.Controllers
                 //needs the rented kit object - need a string object in my RentalAndDetailsViewModel, not an Enum
                 Status = rental.Status.ToString(),
                 Title = kitSelected.Title,
-                UserId = userDetails.ToList()[0].Id
+                UserId = userDetails.ToList()[0].Id,
+                Stock = kitSelected.Stock
             };
 
             return model;
         }
 
+
+
+        //Approve GET Method
+        public ActionResult Approve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Rental rental = db.Rentals.Find(id);
+
+            var model = getVMFromRental(rental);
+
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("Approve", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Approve(RentalAndDetailsViewModel model)
+        {
+            if (model.RentalId == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (ModelState.IsValid)
+            {
+                Rental rental = db.Rentals.Find(model.RentalId);
+                //rental.Status = Rental.StatusEnum.Rented;
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

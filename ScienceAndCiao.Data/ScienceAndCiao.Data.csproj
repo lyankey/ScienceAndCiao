@@ -123,6 +123,22 @@
     <Compile Include="Migrations\202012012332234_SeedMembershipTypeDatabase.designer.cs">
       <DependentUpon>202012012332234_SeedMembershipTypeDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012021334155_SeedingDBwithNewMembershipCalcs.cs" />
+    <Compile Include="Migrations\202012021334155_SeedingDBwithNewMembershipCalcs.designer.cs">
+      <DependentUpon>202012021334155_SeedingDBwithNewMembershipCalcs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012022132395_AddedBoolToCheckBaseKit.cs" />
+    <Compile Include="Migrations\202012022132395_AddedBoolToCheckBaseKit.designer.cs">
+      <DependentUpon>202012022132395_AddedBoolToCheckBaseKit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012022348528_ChangedBoolToIntStock.cs" />
+    <Compile Include="Migrations\202012022348528_ChangedBoolToIntStock.designer.cs">
+      <DependentUpon>202012022348528_ChangedBoolToIntStock.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012030002319_AddedRangeToStock.cs" />
+    <Compile Include="Migrations\202012030002319_AddedRangeToStock.designer.cs">
+      <DependentUpon>202012030002319_AddedRangeToStock.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rental.cs" />
@@ -268,6 +284,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012012332234_SeedMembershipTypeDatabase.resx">
       <DependentUpon>202012012332234_SeedMembershipTypeDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012021334155_SeedingDBwithNewMembershipCalcs.resx">
+      <DependentUpon>202012021334155_SeedingDBwithNewMembershipCalcs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012022132395_AddedBoolToCheckBaseKit.resx">
+      <DependentUpon>202012022132395_AddedBoolToCheckBaseKit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012022348528_ChangedBoolToIntStock.resx">
+      <DependentUpon>202012022348528_ChangedBoolToIntStock.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012030002319_AddedRangeToStock.resx">
+      <DependentUpon>202012030002319_AddedRangeToStock.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

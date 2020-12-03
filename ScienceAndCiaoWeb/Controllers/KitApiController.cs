@@ -26,9 +26,9 @@ namespace ScienceAndCiaoWeb.Controllers
             return Ok(kitQuery.ToList());
         }
 
-        //price
+        //price or availability (I tried to use as bool to check if they have base kit but couldn't get it to work
         //find out parameters we want, then something unique about the product
-        public IHttpActionResult Get(string type, string title = null, string rentalDuration = null, string email = null)
+        public IHttpActionResult Get(string type, string title = null, string Duration = null, string email = null)
         {
 
             if (type.Equals("price"))
@@ -41,7 +41,7 @@ namespace ScienceAndCiaoWeb.Controllers
 
                 var price = Convert.ToDouble(KitQuery.Price) * Convert.ToDouble(chargeRate.ToList()[0].MonthlyMembershipFee) / 100;
 
-                if (rentalDuration == StaticDetails.SixMonthMembership)
+                if (Duration == StaticDetails.SixMonthmemberShipFee)
                 {
                     price = Convert.ToDouble(KitQuery.Price) * Convert.ToDouble(chargeRate.ToList()[0].SixMonthMemberShipFee) / 100;
                 }
@@ -50,7 +50,7 @@ namespace ScienceAndCiaoWeb.Controllers
             else
             {
                 Kit KitQuery = db.Kits.Where(b => b.Title.Equals(title)).SingleOrDefault();
-                return Ok(title);
+                return Ok(KitQuery.Stock);
             }
         }
 

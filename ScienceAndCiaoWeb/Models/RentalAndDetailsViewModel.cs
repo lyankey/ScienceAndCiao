@@ -62,8 +62,8 @@ namespace ScienceAndCiaoWeb.Models
         [DisplayName("Your Price")]
         public double RentalPrice { get; set; }
 
-        public double RentalPriceOneMonth { get; set; }
-        public double RentalPriceSixMonth { get; set; }
+        public double MonthlyMembershipFee { get; set; }
+        public double SixMonthMemberShipFee { get; set; }
         public int RentalId { get; set; }
 
         [DataType(DataType.Date)]
@@ -77,6 +77,7 @@ namespace ScienceAndCiaoWeb.Models
         public DateTime? EndDate { get; set; }
         [DisplayName("Membership Level")]
         public string Duration { get; set; }
+        public int Stock { get; set; }
         public String Status { get; set; }
         public string actionName
         {
